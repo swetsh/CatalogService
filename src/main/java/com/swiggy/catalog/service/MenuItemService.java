@@ -12,8 +12,13 @@ public class MenuItemService {
     @Autowired
     private MenuItemRepository menuItemRepository;
 
+    @Autowired
+    private RestaurantService restaurantService;
+
     public MenuItem createMenuItem(String name, Money price, Integer restaurantId) {
-        MenuItem menuItem = new MenuItem(name, price, new Restaurant());
+        Restaurant restaurant = restaurantService.getRestaurantWithID(restaurantId);
+
+        MenuItem menuItem = new MenuItem(name, price, restaurant);
 
         return menuItemRepository.save(menuItem);
     }

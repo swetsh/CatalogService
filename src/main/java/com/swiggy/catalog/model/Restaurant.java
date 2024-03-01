@@ -21,4 +21,9 @@ public class Restaurant {
     @Embedded
     @Column(unique = true)
     private Location location;
+
+    public Restaurant(String name, Location location){
+        this.name = name;
+        this.location = location;
+    }
 }

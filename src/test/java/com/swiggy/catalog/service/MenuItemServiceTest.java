@@ -1,16 +1,15 @@
 package com.swiggy.catalog.service;
 
 import com.swiggy.catalog.exception.MenuItemAlreadyExistException;
+import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.MenuItem;
 import com.swiggy.catalog.model.Restaurant;
 import com.swiggy.catalog.repository.MenuItemRepository;
-import com.swiggy.catalog.utils.Currency;
 import com.swiggy.catalog.utils.Money;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import static com.swiggy.catalog.utils.Currency.INR;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +23,9 @@ class MenuItemServiceTest {
 
     @Mock
     private MenuItemRepository menuItemRepository;
+
+    @Mock
+    private RestaurantService restaurantService;
 
     @InjectMocks
     private MenuItemService menuItemService;
@@ -43,5 +45,22 @@ class MenuItemServiceTest {
 
         assertNotNull(createdMenuItem);
         verify(menuItemRepository, times(1)).save(eq(createdMenuItem));
+    }
+
+    @Test
+    public void testCreateMenuItem_RestaurantNotFound() {
+        String itemName = "Biryani";
+        Money price = new Money(99, INR);
+        int restaurantId = 1;
+
+        MenuItem menuItem = new MenuItem(itemName, price, new Restaurant());
+
+
+        when(menuItemRepository.save(any(MenuItem.class))).thenReturn(menuItem);
+        when(restaurantService.getRestaurantWithID(restaurantId)).thenThrow(RestaurantNotFoundException.class);
+
+        assertThrows(RestaurantNotFoundException.class,
+                () ->  menuItemService.createMenuItem(itemName, price, restaurantId));
+
     }
 }
