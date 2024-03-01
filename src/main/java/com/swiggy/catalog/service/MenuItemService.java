@@ -15,7 +15,7 @@ public class MenuItemService {
     @Autowired
     private RestaurantService restaurantService;
 
-    public MenuItem createMenuItem(String name, Money price, Integer restaurantId) {
+    public MenuItem create(String name, Money price, Integer restaurantId) {
         Restaurant restaurant = restaurantService.getRestaurantWithID(restaurantId);
 
         MenuItem menuItem = new MenuItem(name, price, restaurant);

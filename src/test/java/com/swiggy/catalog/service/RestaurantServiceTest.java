@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -25,7 +27,7 @@ public class RestaurantServiceTest {
 
     @Test
     public void testCreateRestaurant_Success() {
-        String name = "Dhaba";
+        String name = "KFC";
         Location location = new Location("40.8736, -53.7564");
 
         Restaurant restaurant = new Restaurant(name, location);
@@ -33,7 +35,7 @@ public class RestaurantServiceTest {
 
         when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
 
-        Restaurant createdRestaurant = restaurantService.createRestaurant(name, location);
+        Restaurant createdRestaurant = restaurantService.create(name, location);
 
         assertNotNull(createdRestaurant);
         verify(restaurantRepository, times(1)).save(eq(createdRestaurant));
@@ -41,7 +43,7 @@ public class RestaurantServiceTest {
 
     @Test
     public void testFindRestaurant_Success() {
-        String name = "Dhaba";
+        String name = "KFC";
         Location location = new Location("40.8736, -53.7564");
 
         Restaurant restaurant = new Restaurant(name, location);
@@ -56,13 +58,25 @@ public class RestaurantServiceTest {
 
     @Test
     public void testFindRestaurant_NotFound() {
-        String name = "Dhaba";
-        Location location = new Location("40.8736, -53.7564");
-
-        Restaurant restaurant = new Restaurant(name, location);
-
         when(restaurantRepository.findById(anyInt())).thenThrow(RestaurantNotFoundException.class);
 
         assertThrows(RestaurantNotFoundException.class, () -> restaurantService.getRestaurantWithID(1));
+    }
+
+
+    @Test
+    void testFetchAllRestaurant_Success() {
+        Restaurant restaurant = new Restaurant("one", new Location());
+        Restaurant secondRestaurant = new Restaurant("two", new Location());
+        Restaurant thirdRestaurant = new Restaurant("three", new Location());
+
+        when(restaurantRepository.findAll()).thenReturn(Arrays.asList(restaurant, secondRestaurant));
+
+        List<Restaurant> restaurants = restaurantService.fetchALl();
+
+        assertEquals(2, restaurants.size());
+        assertTrue(restaurants.contains(restaurant));
+        assertTrue(restaurants.contains(secondRestaurant));
+        assertFalse(restaurants.contains(thirdRestaurant));
     }
 }

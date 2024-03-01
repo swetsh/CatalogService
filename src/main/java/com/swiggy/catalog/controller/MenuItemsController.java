@@ -1,7 +1,7 @@
 package com.swiggy.catalog.controller;
 
 import com.swiggy.catalog.constant.ResponseMessages;
-import com.swiggy.catalog.dto.MenuItemRequest;
+import com.swiggy.catalog.dto.MenuItemsRequest;
 import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.MenuItem;
 import com.swiggy.catalog.service.MenuItemService;
@@ -13,24 +13,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/restaurants/{restaurantId}/menu-items")
-public class MenuItemController {
+public class MenuItemsController {
     @Autowired
     private MenuItemService menuItemService;
 
     @PostMapping("")
-    public ResponseEntity<Object> createMenuItem(@PathVariable("restaurantId") int restaurantId , @RequestBody MenuItemRequest menuItemRequest) {
+    public ResponseEntity<Object> create(@PathVariable("restaurantId") int restaurantId , @RequestBody MenuItemsRequest menuItemsRequest) {
         try {
-            MenuItem menuItem = menuItemService.createMenuItem(
-                    menuItemRequest.itemName(),
-                    menuItemRequest.price(),
+            MenuItem menuItem = menuItemService.create(
+                    menuItemsRequest.itemName(),
+                    menuItemsRequest.price(),
                     restaurantId);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(menuItem);
-        } catch (RestaurantNotFoundException restaurantNotFoundException){
+        }
+        catch (RestaurantNotFoundException restaurantNotFoundException){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ResponseMessages.RESTAURANT_DOES_NOT_EXIST_WITH_ID);
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.toString());
         }
     }
 }
