@@ -1,5 +1,6 @@
 package com.swiggy.catalog.service;
 
+import com.swiggy.catalog.exception.LocationAlreadyExistException;
 import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.Restaurant;
 import com.swiggy.catalog.repository.RestaurantRepository;
@@ -7,6 +8,7 @@ import com.swiggy.catalog.utils.Location;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +41,17 @@ public class RestaurantServiceTest {
 
         assertNotNull(createdRestaurant);
         verify(restaurantRepository, times(1)).save(eq(createdRestaurant));
+    }
+
+    @Test
+    public void testCreateRestaurant_LocationAlreadyExists() {
+        String name = "KFC";
+        Location location = new Location("40.8736, -53.7564");
+
+
+        when(restaurantRepository.save(any(Restaurant.class))).thenThrow(DataIntegrityViolationException.class);
+
+        assertThrows(LocationAlreadyExistException.class, () -> restaurantService.create(name, location));
     }
 
     @Test

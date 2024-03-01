@@ -3,6 +3,7 @@ package com.swiggy.catalog.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiggy.catalog.constant.ResponseMessages;
 import com.swiggy.catalog.dto.RestaurantsRequest;
+import com.swiggy.catalog.exception.LocationAlreadyExistException;
 import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.Restaurant;
 import com.swiggy.catalog.service.RestaurantService;
@@ -45,6 +46,22 @@ class RestaurantsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(restaurantsRequest)))
                 .andExpect(status().isCreated());
+
+        verify(restaurantService, times(1)).create(anyString(), any(Location.class));
+    }
+
+    @Test
+    public void testCreateRestaurant_LocationExists() throws Exception {
+        RestaurantsRequest restaurantsRequest = new RestaurantsRequest("test", new Location());
+
+        when(restaurantService.create(anyString(), any(Location.class))).thenThrow(LocationAlreadyExistException.class);
+
+        mockMvc.perform(post("/api/v1/restaurants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(restaurantsRequest)))
+                .andExpect(status().isConflict())
+                .andExpect((MockMvcResultMatchers.content().string(ResponseMessages.RESTAURANT_EXIST_AT_LOCATION)));
+
 
         verify(restaurantService, times(1)).create(anyString(), any(Location.class));
     }

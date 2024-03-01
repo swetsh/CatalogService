@@ -2,10 +2,12 @@ package com.swiggy.catalog.controller;
 
 import com.swiggy.catalog.constant.ResponseMessages;
 import com.swiggy.catalog.dto.RestaurantsRequest;
+import com.swiggy.catalog.exception.LocationAlreadyExistException;
 import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.Restaurant;
 import com.swiggy.catalog.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +50,11 @@ public class RestaurantsController {
             Restaurant restaurant = restaurantService.create(restaurantsRequest.name(), restaurantsRequest.location());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(restaurant);
-        } catch (Exception e) {
+        }
+        catch (LocationAlreadyExistException locationAlreadyExistException){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseMessages.RESTAURANT_EXIST_AT_LOCATION);
+        }
+        catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

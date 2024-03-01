@@ -1,7 +1,6 @@
 package com.swiggy.catalog.model;
 
 import com.swiggy.catalog.utils.Location;
-import com.swiggy.catalog.utils.Money;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,10 +18,9 @@ public class Restaurant {
     private String name;
 
     @Embedded
-    @Column(unique = true)
     private Location location;
 
-    public Restaurant(String name, Location location){
+    public Restaurant(String name, Location location) {
         this.name = name;
         this.location = location;
     }
