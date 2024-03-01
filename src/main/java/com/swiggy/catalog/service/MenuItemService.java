@@ -7,6 +7,8 @@ import com.swiggy.catalog.utils.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MenuItemService {
     @Autowired
@@ -21,5 +23,9 @@ public class MenuItemService {
         MenuItem menuItem = new MenuItem(name, price, restaurant);
 
         return menuItemRepository.save(menuItem);
+    }
+
+    public List<MenuItem> listAllByRestaurantId(int restaurantId) {
+        return menuItemRepository.findAllByRestaurantId(restaurantId);
     }
 }

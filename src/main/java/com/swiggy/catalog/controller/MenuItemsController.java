@@ -10,12 +10,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("api/v1/restaurants/{restaurantId}/menu-items")
 public class MenuItemsController {
     @Autowired
     private MenuItemService menuItemService;
+
+
+    @GetMapping("")
+    public ResponseEntity<Object> listAll(@PathVariable("restaurantId") int restaurantId) {
+        try {
+            List<MenuItem> menuItems = menuItemService.listAllByRestaurantId(restaurantId);
+            return ResponseEntity.status(HttpStatus.FOUND).body(menuItems);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("")
     public ResponseEntity<Object> create(@PathVariable("restaurantId") int restaurantId , @RequestBody MenuItemsRequest menuItemsRequest) {

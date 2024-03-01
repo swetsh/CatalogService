@@ -5,6 +5,7 @@ import com.swiggy.catalog.constant.ResponseMessages;
 import com.swiggy.catalog.dto.MenuItemsRequest;
 import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.MenuItem;
+import com.swiggy.catalog.model.Restaurant;
 import com.swiggy.catalog.service.MenuItemService;
 import com.swiggy.catalog.utils.Money;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Arrays;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -59,6 +64,27 @@ class MenuItemsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string(ResponseMessages.RESTAURANT_DOES_NOT_EXIST_WITH_ID));
 
     }
+
+    @Test
+    public void testGetAllMenuItems_Success() throws Exception {
+        MenuItem menuItem = new MenuItem("one", new Money(10), new Restaurant());
+        MenuItem secondMenuItem = new MenuItem("two", new Money(10), new Restaurant());
+
+
+        when(menuItemService.listAllByRestaurantId(anyInt())).thenReturn(Arrays.asList(menuItem, secondMenuItem));
+
+        mockMvc.perform(get("/api/v1/restaurants/1/menu-items")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isFound())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].itemName").value("one"))
+                .andExpect(jsonPath("$[1].itemName").value("two"));
+
+
+        verify(menuItemService, times(1)).listAllByRestaurantId(eq(1));
+        verify(menuItemService, never()).listAllByRestaurantId(eq(2));
+    }
+
 
 
     private String asJsonString(Object obj) {

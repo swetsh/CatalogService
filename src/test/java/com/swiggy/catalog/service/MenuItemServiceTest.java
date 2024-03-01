@@ -10,6 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -61,5 +64,21 @@ class MenuItemServiceTest {
         assertThrows(RestaurantNotFoundException.class,
                 () ->  menuItemService.create(itemName, price, restaurantId));
 
+    }
+
+    @Test
+    void testListAllMenuItems_Success() {
+        MenuItem menuItem = new MenuItem("one", new Money(10), new Restaurant());
+        MenuItem secondMenuItem = new MenuItem("two", new Money(10), new Restaurant());
+        MenuItem thirdMenuItem = new MenuItem("three", new Money(10), new Restaurant());
+
+        when(menuItemRepository.findAllByRestaurantId(anyInt())).thenReturn(Arrays.asList(menuItem, secondMenuItem));
+
+        List<MenuItem> menuItems = menuItemService.listAllByRestaurantId(1);
+
+        assertEquals(2, menuItems.size());
+        assertTrue(menuItems.contains(menuItem));
+        assertTrue(menuItems.contains(secondMenuItem));
+        assertFalse(menuItems.contains(thirdMenuItem));
     }
 }
