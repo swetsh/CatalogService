@@ -7,7 +7,6 @@ import com.swiggy.catalog.exception.RestaurantNotFoundException;
 import com.swiggy.catalog.model.Restaurant;
 import com.swiggy.catalog.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

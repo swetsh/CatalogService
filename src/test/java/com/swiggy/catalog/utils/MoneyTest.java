@@ -4,8 +4,6 @@ import com.swiggy.catalog.exception.NegativeAmountException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 class MoneyTest {
 
