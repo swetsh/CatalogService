@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -37,6 +38,7 @@ class RestaurantsControllerTest {
     private RestaurantService restaurantService;
 
     @Test
+    @WithMockUser
     public void testCreateRestaurant_Success() throws Exception {
         RestaurantsRequest restaurantsRequest = new RestaurantsRequest("test", new Location());
 
@@ -51,6 +53,7 @@ class RestaurantsControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testCreateRestaurant_LocationExists() throws Exception {
         RestaurantsRequest restaurantsRequest = new RestaurantsRequest("test", new Location());
 
@@ -67,6 +70,7 @@ class RestaurantsControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testGetRestaurantWithId_Success() throws Exception {
         Restaurant restaurant = new Restaurant("one", new Location());
         Restaurant secondRestaurant = new Restaurant("two", new Location());
@@ -85,6 +89,7 @@ class RestaurantsControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testGetRestaurantWithId_NotFound() throws Exception {
         when(restaurantService.getRestaurantWithID(2)).thenThrow(RestaurantNotFoundException.class);
 
@@ -95,6 +100,7 @@ class RestaurantsControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testGetAllRestaurant_Success() throws Exception {
         Restaurant restaurant = new Restaurant("one", new Location());
         Restaurant secondRestaurant = new Restaurant("two", new Location());

@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -36,6 +37,7 @@ class MenuItemsControllerTest {
     private MenuItemService menuItemService;
 
     @Test
+    @WithMockUser
     public void testCreateMenuItem_Success() throws Exception {
         MenuItemsRequest menuItemsRequest = new MenuItemsRequest("test", new Money(10));
 
@@ -52,6 +54,7 @@ class MenuItemsControllerTest {
 
 
     @Test
+    @WithMockUser
     public void testCreateMenuItem_RestaurantNotFound() throws Exception {
         MenuItemsRequest menuItemsRequest = new MenuItemsRequest("test", new Money(10));
 
@@ -66,6 +69,7 @@ class MenuItemsControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testGetAllMenuItems_Success() throws Exception {
         MenuItem menuItem = new MenuItem("one", new Money(10), new Restaurant());
         MenuItem secondMenuItem = new MenuItem("two", new Money(10), new Restaurant());
